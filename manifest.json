@@ -1,0 +1,98 @@
+{
+    "name": "L'Effaceur - Retour au Top",
+    "short_name": "L'Effaceur",
+    "description": "Application de reconditionnement basket - Poste 4-5 - Retour à la compétition en 5 semaines",
+    "start_url": "/index.html",
+    "display": "standalone",
+    "background_color": "#1A1A2E",
+    "theme_color": "#FF6B35",
+    "orientation": "portrait",
+    "scope": "/",
+    "lang": "fr",
+    "categories": ["fitness", "sports", "health"],
+    "icons": [
+        {
+            "src": "icons/icon-72.png",
+            "sizes": "72x72",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-96.png",
+            "sizes": "96x96",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-128.png",
+            "sizes": "128x128",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-144.png",
+            "sizes": "144x144",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-152.png",
+            "sizes": "152x152",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-384.png",
+            "sizes": "384x384",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "screenshots/home.png",
+            "sizes": "390x844",
+            "type": "image/png",
+            "form_factor": "narrow",
+            "label": "Page d'accueil"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Séance du jour",
+            "short_name": "Séance",
+            "description": "Lancer la séance du jour",
+            "url": "/index.html#workout",
+            "icons": [
+                {
+                    "src": "icons/workout-96.png",
+                    "sizes": "96x96"
+                }
+            ]
+        },
+        {
+            "name": "Ma progression",
+            "short_name": "Progrès",
+            "description": "Voir ma progression",
+            "url": "/index.html#progress",
+            "icons": [
+                {
+                    "src": "icons/progress-96.png",
+                    "sizes": "96x96"
+                }
+            ]
+        }
+    ]
+}

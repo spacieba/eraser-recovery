@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#FF6B35">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icons/icon.svg">
+    <link rel="icon" type="image/svg+xml" href="icons/icon.svg">
+    <title>L'Effaceur - Retour au Top</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Splash Screen -->
+    <div id="splash" class="splash">
+        <div class="splash-content">
+            <div class="basketball-icon">🏀</div>
+            <h1>L'EFFACEUR</h1>
+            <p>Retour au Top</p>
+            <div class="loading-bar">
+                <div class="loading-progress"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main App -->
+    <div id="app" class="app hidden">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <span class="fire-streak" id="streakBadge">🔥 <span id="streakCount">0</span></span>
+            </div>
+            <h1 class="header-title">L'Effaceur</h1>
+            <div class="header-right">
+                <span class="xp-badge" id="xpBadge">⚡ <span id="xpCount">0</span> XP</span>
+            </div>
+        </header>
+
+        <!-- Navigation Tabs -->
+        <nav class="tabs">
+            <button class="tab active" data-tab="home">
+                <span class="tab-icon">🏠</span>
+                <span class="tab-label">Accueil</span>
+            </button>
+            <button class="tab" data-tab="workout">
+                <span class="tab-icon">💪</span>
+                <span class="tab-label">Séances</span>
+            </button>
+            <button class="tab" data-tab="progress">
+                <span class="tab-icon">📊</span>
+                <span class="tab-label">Progrès</span>
+            </button>
+            <button class="tab" data-tab="profile">
+                <span class="tab-icon">🏆</span>
+                <span class="tab-label">Profil</span>
+            </button>
+        </nav>
+
+        <!-- Pages Container -->
+        <main class="pages">
+            <!-- Home Page -->
+            <section id="home" class="page active">
+                <div class="home-hero">
+                    <div class="week-badge" id="weekBadge">
+                        <span class="week-label">SEMAINE</span>
+                        <span class="week-number" id="currentWeek">1</span>
+                        <span class="week-phase" id="currentPhase">Phase 1</span>
+                    </div>
+                    <div class="motivation-quote" id="motivationQuote">
+                        "L'Effaceur Is Back! 🏀"
+                    </div>
+                </div>
+
+                <div class="today-section">
+                    <h2>📅 Aujourd'hui</h2>
+                    <div class="today-card" id="todayCard">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <div class="week-overview">
+                    <h2>📆 Cette semaine</h2>
+                    <div class="week-days" id="weekDays">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <div class="quick-stats">
+                    <div class="stat-card">
+                        <span class="stat-icon">🎯</span>
+                        <span class="stat-value" id="completedSessions">0</span>
+                        <span class="stat-label">Séances</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">⏱️</span>
+                        <span class="stat-value" id="totalMinutes">0</span>
+                        <span class="stat-label">Minutes</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-icon">🔥</span>
+                        <span class="stat-value" id="calories">0</span>
+                        <span class="stat-label">Calories</span>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Workout Page -->
+            <section id="workout" class="page">
+                <div class="workout-tabs">
+                    <button class="workout-tab active" data-session="A">Lundi</button>
+                    <button class="workout-tab" data-session="B">Mercredi</button>
+                    <button class="workout-tab" data-session="C">Samedi</button>
+                    <button class="workout-tab" data-session="daily">Routine</button>
+                </div>
+
+                <div class="session-info" id="sessionInfo">
+                    <!-- Filled by JS -->
+                </div>
+
+                <div class="exercise-list" id="exerciseList">
+                    <!-- Filled by JS -->
+                </div>
+
+                <button class="start-workout-btn" id="startWorkoutBtn">
+                    <span class="btn-icon">▶️</span>
+                    <span class="btn-text">Démarrer la séance</span>
+                </button>
+            </section>
+
+            <!-- Progress Page -->
+            <section id="progress" class="page">
+                <div class="progress-header">
+                    <h2>📈 Ta progression</h2>
+                </div>
+
+                <div class="progress-chart">
+                    <div class="chart-container" id="weeklyChart">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <div class="achievements-section">
+                    <h3>🏆 Badges débloqués</h3>
+                    <div class="badges-grid" id="badgesGrid">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+
+                <div class="history-section">
+                    <h3>📜 Historique</h3>
+                    <div class="history-list" id="historyList">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Profile Page -->
+            <section id="profile" class="page">
+                <div class="profile-header">
+                    <div class="avatar-container">
+                        <div class="avatar" id="userAvatar">🏀</div>
+                        <div class="level-badge" id="levelBadge">Niv. 1</div>
+                    </div>
+                    <h2 id="userName">L'Effaceur</h2>
+                    <p class="profile-subtitle">Poste 4-5 • En reconditionnement</p>
+                </div>
+
+                <div class="level-progress">
+                    <div class="level-bar">
+                        <div class="level-fill" id="levelFill"></div>
+                    </div>
+                    <span class="level-text" id="levelText">0 / 500 XP</span>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="profile-stat">
+                        <span class="stat-number" id="totalWorkouts">0</span>
+                        <span class="stat-desc">Séances totales</span>
+                    </div>
+                    <div class="profile-stat">
+                        <span class="stat-number" id="bestStreak">0</span>
+                        <span class="stat-desc">Meilleur streak</span>
+                    </div>
+                    <div class="profile-stat">
+                        <span class="stat-number" id="totalXP">0</span>
+                        <span class="stat-desc">XP Total</span>
+                    </div>
+                </div>
+
+                <div class="settings-section">
+                    <h3>⚙️ Paramètres</h3>
+                    <div class="setting-item">
+                        <span>🔔 Rappels</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="notificationsToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <span>🌙 Mode sombre</span>
+                        <label class="toggle">
+                            <input type="checkbox" id="darkModeToggle">
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+                    <div class="setting-item">
+                        <label for="weekSelect">📅 Semaine actuelle</label>
+                        <select id="weekSelect">
+                            <option value="1">Semaine 1</option>
+                            <option value="2">Semaine 2</option>
+                            <option value="3">Semaine 3</option>
+                            <option value="4">Semaine 4</option>
+                            <option value="5">Semaine 5</option>
+                        </select>
+                    </div>
+                    <button class="reset-btn" id="resetBtn">🔄 Réinitialiser la progression</button>
+                </div>
+
+                <div class="tips-section">
+                    <h3>💡 Conseils du jour</h3>
+                    <div class="tip-card" id="tipCard">
+                        <!-- Filled by JS -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Workout Modal -->
+    <div id="workoutModal" class="modal hidden">
+        <div class="modal-content workout-mode">
+            <div class="workout-header">
+                <button class="close-workout" id="closeWorkout">✕</button>
+                <div class="exercise-progress">
+                    <span id="exerciseCounter">1/10</span>
+                </div>
+            </div>
+
+            <div class="current-exercise" id="currentExercise">
+                <div class="exercise-phase" id="exercisePhase">ÉCHAUFFEMENT</div>
+                <h2 class="exercise-name" id="exerciseName">Jumping Jacks</h2>
+                <div class="exercise-demo" id="exerciseDemo">🏃</div>
+                <p class="exercise-instructions" id="exerciseInstructions">
+                    Instructions détaillées...
+                </p>
+                <div class="exercise-reps" id="exerciseReps">
+                    <span class="reps-value">25-30</span>
+                    <span class="reps-label">répétitions</span>
+                </div>
+            </div>
+
+            <div class="timer-section" id="timerSection">
+                <div class="timer-circle">
+                    <svg class="timer-svg" viewBox="0 0 100 100">
+                        <circle class="timer-bg" cx="50" cy="50" r="45"></circle>
+                        <circle class="timer-progress" id="timerProgress" cx="50" cy="50" r="45"></circle>
+                    </svg>
+                    <div class="timer-display" id="timerDisplay">00:40</div>
+                </div>
+                <div class="timer-label" id="timerLabel">TRAVAIL</div>
+            </div>
+
+            <div class="workout-controls">
+                <button class="control-btn secondary" id="prevExercise">⏮️</button>
+                <button class="control-btn primary" id="playPauseBtn">▶️</button>
+                <button class="control-btn secondary" id="nextExercise">⏭️</button>
+            </div>
+
+            <button class="skip-btn" id="skipBtn">Passer ➡️</button>
+        </div>
+    </div>
+
+    <!-- Completion Modal -->
+    <div id="completionModal" class="modal hidden">
+        <div class="modal-content completion-mode">
+            <div class="confetti" id="confetti"></div>
+            <div class="completion-icon">🎉</div>
+            <h2>Séance terminée !</h2>
+            <div class="completion-stats">
+                <div class="completion-stat">
+                    <span class="stat-value" id="earnedXP">+150</span>
+                    <span class="stat-label">XP gagnés</span>
+                </div>
+                <div class="completion-stat">
+                    <span class="stat-value" id="sessionDuration">45</span>
+                    <span class="stat-label">minutes</span>
+                </div>
+                <div class="completion-stat">
+                    <span class="stat-value" id="sessionCalories">350</span>
+                    <span class="stat-label">calories</span>
+                </div>
+            </div>
+            <div class="new-badges" id="newBadges">
+                <!-- Filled by JS if new badges -->
+            </div>
+            <button class="completion-btn" id="completionBtn">Super ! 💪</button>
+        </div>
+    </div>
+
+    <!-- Exercise Detail Modal -->
+    <div id="exerciseDetailModal" class="modal hidden">
+        <div class="modal-content exercise-detail">
+            <button class="close-modal" id="closeExerciseDetail">✕</button>
+            <div class="detail-header">
+                <div class="detail-icon" id="detailIcon">🏋️</div>
+                <h2 id="detailName">Nom de l'exercice</h2>
+            </div>
+            <div class="detail-body">
+                <div class="detail-section">
+                    <h4>📝 Instructions</h4>
+                    <ul id="detailInstructions"></ul>
+                </div>
+                <div class="detail-section">
+                    <h4>⚠️ Points clés</h4>
+                    <p id="detailTips"></p>
+                </div>
+            </div>
+            <button class="got-it-btn" id="gotItBtn">Compris ! 👍</button>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Enregistrement du Service Worker
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('SW enregistré:', registration.scope);
+                    })
+                    .catch(error => {
+                        console.log('Erreur SW:', error);
+                    });
+            });
+        }
+    </script>
+</body>
+</html>

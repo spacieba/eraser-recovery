@@ -1,0 +1,11 @@
+# IDE
+.claude/
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Original document (optional - remove this line if you want to include it)
+*.docx
