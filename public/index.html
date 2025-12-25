@@ -25,6 +25,53 @@
         </div>
     </div>
 
+    <!-- Auth Screen -->
+    <div id="authScreen" class="auth-screen hidden">
+        <div class="auth-container">
+            <div class="auth-header">
+                <div class="auth-logo">🏀</div>
+                <h1>L'EFFACEUR</h1>
+                <p>Rejoins l'équipe !</p>
+            </div>
+
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form">
+                <h2>Connexion</h2>
+                <div class="form-group">
+                    <label for="loginEmail">Email</label>
+                    <input type="email" id="loginEmail" placeholder="ton@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Mot de passe</label>
+                    <input type="password" id="loginPassword" placeholder="********" autocomplete="current-password">
+                </div>
+                <div class="auth-error hidden" id="loginError"></div>
+                <button class="auth-btn primary" id="loginBtn">Se connecter</button>
+                <p class="auth-switch">Pas encore de compte ? <a href="#" id="showRegister">Creer un compte</a></p>
+            </div>
+
+            <!-- Register Form -->
+            <div id="registerForm" class="auth-form hidden">
+                <h2>Creer un compte</h2>
+                <div class="form-group">
+                    <label for="registerUsername">Pseudo</label>
+                    <input type="text" id="registerUsername" placeholder="Ton pseudo" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="registerEmail">Email</label>
+                    <input type="email" id="registerEmail" placeholder="ton@email.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="registerPassword">Mot de passe</label>
+                    <input type="password" id="registerPassword" placeholder="Min. 4 caracteres" autocomplete="new-password">
+                </div>
+                <div class="auth-error hidden" id="registerError"></div>
+                <button class="auth-btn primary" id="registerBtn">S'inscrire</button>
+                <p class="auth-switch">Deja un compte ? <a href="#" id="showLogin">Se connecter</a></p>
+            </div>
+        </div>
+    </div>
+
     <!-- Main App -->
     <div id="app" class="app hidden">
         <!-- Header -->
@@ -46,14 +93,18 @@
             </button>
             <button class="tab" data-tab="workout">
                 <span class="tab-icon">💪</span>
-                <span class="tab-label">Séances</span>
+                <span class="tab-label">Seances</span>
+            </button>
+            <button class="tab" data-tab="community">
+                <span class="tab-icon">👥</span>
+                <span class="tab-label">Equipe</span>
             </button>
             <button class="tab" data-tab="progress">
                 <span class="tab-icon">📊</span>
-                <span class="tab-label">Progrès</span>
+                <span class="tab-label">Progres</span>
             </button>
             <button class="tab" data-tab="profile">
-                <span class="tab-icon">🏆</span>
+                <span class="tab-icon">👤</span>
                 <span class="tab-label">Profil</span>
             </button>
         </nav>
@@ -68,30 +119,21 @@
                         <span class="week-number" id="currentWeek">1</span>
                         <span class="week-phase" id="currentPhase">Phase 1</span>
                     </div>
-                    <div class="motivation-quote" id="motivationQuote">
-                        "L'Effaceur Is Back! 🏀"
-                    </div>
+                    <div class="motivation-quote" id="motivationQuote">"L'Effaceur Is Back! 🏀"</div>
                 </div>
-
                 <div class="today-section">
                     <h2>📅 Aujourd'hui</h2>
-                    <div class="today-card" id="todayCard">
-                        <!-- Filled by JS -->
-                    </div>
+                    <div class="today-card" id="todayCard"></div>
                 </div>
-
                 <div class="week-overview">
                     <h2>📆 Cette semaine</h2>
-                    <div class="week-days" id="weekDays">
-                        <!-- Filled by JS -->
-                    </div>
+                    <div class="week-days" id="weekDays"></div>
                 </div>
-
                 <div class="quick-stats">
                     <div class="stat-card">
                         <span class="stat-icon">🎯</span>
                         <span class="stat-value" id="completedSessions">0</span>
-                        <span class="stat-label">Séances</span>
+                        <span class="stat-label">Seances</span>
                     </div>
                     <div class="stat-card">
                         <span class="stat-icon">⏱️</span>
@@ -114,19 +156,27 @@
                     <button class="workout-tab" data-session="C">Samedi</button>
                     <button class="workout-tab" data-session="daily">Routine</button>
                 </div>
-
-                <div class="session-info" id="sessionInfo">
-                    <!-- Filled by JS -->
-                </div>
-
-                <div class="exercise-list" id="exerciseList">
-                    <!-- Filled by JS -->
-                </div>
-
+                <div class="session-info" id="sessionInfo"></div>
+                <div class="exercise-list" id="exerciseList"></div>
                 <button class="start-workout-btn" id="startWorkoutBtn">
                     <span class="btn-icon">▶️</span>
-                    <span class="btn-text">Démarrer la séance</span>
+                    <span class="btn-text">Demarrer la seance</span>
                 </button>
+            </section>
+
+            <!-- Community Page -->
+            <section id="community" class="page">
+                <div class="community-header">
+                    <h2>👥 L'Equipe</h2>
+                </div>
+                <div class="leaderboard-section">
+                    <h3>🏆 Classement</h3>
+                    <div class="leaderboard-list" id="leaderboardList"></div>
+                </div>
+                <div class="feed-section">
+                    <h3>📣 Activite recente</h3>
+                    <div class="feed-list" id="feedList"></div>
+                </div>
             </section>
 
             <!-- Progress Page -->
@@ -134,25 +184,16 @@
                 <div class="progress-header">
                     <h2>📈 Ta progression</h2>
                 </div>
-
                 <div class="progress-chart">
-                    <div class="chart-container" id="weeklyChart">
-                        <!-- Filled by JS -->
-                    </div>
+                    <div class="chart-container" id="weeklyChart"></div>
                 </div>
-
                 <div class="achievements-section">
-                    <h3>🏆 Badges débloqués</h3>
-                    <div class="badges-grid" id="badgesGrid">
-                        <!-- Filled by JS -->
-                    </div>
+                    <h3>🏆 Badges debloques</h3>
+                    <div class="badges-grid" id="badgesGrid"></div>
                 </div>
-
                 <div class="history-section">
                     <h3>📜 Historique</h3>
-                    <div class="history-list" id="historyList">
-                        <!-- Filled by JS -->
-                    </div>
+                    <div class="history-list" id="historyList"></div>
                 </div>
             </section>
 
@@ -164,20 +205,18 @@
                         <div class="level-badge" id="levelBadge">Niv. 1</div>
                     </div>
                     <h2 id="userName">L'Effaceur</h2>
-                    <p class="profile-subtitle">Poste 4-5 • En reconditionnement</p>
+                    <p class="profile-subtitle">Poste 4-5 - En reconditionnement</p>
                 </div>
-
                 <div class="level-progress">
                     <div class="level-bar">
                         <div class="level-fill" id="levelFill"></div>
                     </div>
                     <span class="level-text" id="levelText">0 / 500 XP</span>
                 </div>
-
                 <div class="stats-grid">
                     <div class="profile-stat">
                         <span class="stat-number" id="totalWorkouts">0</span>
-                        <span class="stat-desc">Séances totales</span>
+                        <span class="stat-desc">Seances totales</span>
                     </div>
                     <div class="profile-stat">
                         <span class="stat-number" id="bestStreak">0</span>
@@ -188,16 +227,8 @@
                         <span class="stat-desc">XP Total</span>
                     </div>
                 </div>
-
                 <div class="settings-section">
-                    <h3>⚙️ Paramètres</h3>
-                    <div class="setting-item">
-                        <span>🔔 Rappels</span>
-                        <label class="toggle">
-                            <input type="checkbox" id="notificationsToggle">
-                            <span class="toggle-slider"></span>
-                        </label>
-                    </div>
+                    <h3>⚙️ Parametres</h3>
                     <div class="setting-item">
                         <span>🌙 Mode sombre</span>
                         <label class="toggle">
@@ -215,14 +246,11 @@
                             <option value="5">Semaine 5</option>
                         </select>
                     </div>
-                    <button class="reset-btn" id="resetBtn">🔄 Réinitialiser la progression</button>
+                    <button class="logout-btn" id="logoutBtn">🚪 Se deconnecter</button>
                 </div>
-
                 <div class="tips-section">
                     <h3>💡 Conseils du jour</h3>
-                    <div class="tip-card" id="tipCard">
-                        <!-- Filled by JS -->
-                    </div>
+                    <div class="tip-card" id="tipCard"></div>
                 </div>
             </section>
         </main>
@@ -232,25 +260,21 @@
     <div id="workoutModal" class="modal hidden">
         <div class="modal-content workout-mode">
             <div class="workout-header">
-                <button class="close-workout" id="closeWorkout">✕</button>
+                <button class="close-workout" id="closeWorkout">X</button>
                 <div class="exercise-progress">
                     <span id="exerciseCounter">1/10</span>
                 </div>
             </div>
-
             <div class="current-exercise" id="currentExercise">
-                <div class="exercise-phase" id="exercisePhase">ÉCHAUFFEMENT</div>
+                <div class="exercise-phase" id="exercisePhase">ECHAUFFEMENT</div>
                 <h2 class="exercise-name" id="exerciseName">Jumping Jacks</h2>
                 <div class="exercise-demo" id="exerciseDemo">🏃</div>
-                <p class="exercise-instructions" id="exerciseInstructions">
-                    Instructions détaillées...
-                </p>
+                <p class="exercise-instructions" id="exerciseInstructions">Instructions...</p>
                 <div class="exercise-reps" id="exerciseReps">
                     <span class="reps-value">25-30</span>
-                    <span class="reps-label">répétitions</span>
+                    <span class="reps-label">repetitions</span>
                 </div>
             </div>
-
             <div class="timer-section" id="timerSection">
                 <div class="timer-circle">
                     <svg class="timer-svg" viewBox="0 0 100 100">
@@ -261,14 +285,32 @@
                 </div>
                 <div class="timer-label" id="timerLabel">TRAVAIL</div>
             </div>
-
             <div class="workout-controls">
                 <button class="control-btn secondary" id="prevExercise">⏮️</button>
                 <button class="control-btn primary" id="playPauseBtn">▶️</button>
                 <button class="control-btn secondary" id="nextExercise">⏭️</button>
             </div>
-
             <button class="skip-btn" id="skipBtn">Passer ➡️</button>
+        </div>
+    </div>
+
+    <!-- Rating Modal -->
+    <div id="ratingModal" class="modal hidden">
+        <div class="modal-content rating-mode">
+            <h2>Comment c'etait ?</h2>
+            <p class="rating-exercise-name" id="ratingExerciseName">Exercice</p>
+            <div class="rating-stars" id="ratingStars">
+                <button class="star-btn" data-rating="1">⭐</button>
+                <button class="star-btn" data-rating="2">⭐</button>
+                <button class="star-btn" data-rating="3">⭐</button>
+                <button class="star-btn" data-rating="4">⭐</button>
+                <button class="star-btn" data-rating="5">⭐</button>
+            </div>
+            <textarea id="ratingNotes" placeholder="Notes (optionnel)..."></textarea>
+            <div class="rating-buttons">
+                <button class="rating-btn skip" id="skipRatingBtn">Passer</button>
+                <button class="rating-btn submit" id="submitRatingBtn">Valider</button>
+            </div>
         </div>
     </div>
 
@@ -277,11 +319,11 @@
         <div class="modal-content completion-mode">
             <div class="confetti" id="confetti"></div>
             <div class="completion-icon">🎉</div>
-            <h2>Séance terminée !</h2>
+            <h2>Seance terminee !</h2>
             <div class="completion-stats">
                 <div class="completion-stat">
                     <span class="stat-value" id="earnedXP">+150</span>
-                    <span class="stat-label">XP gagnés</span>
+                    <span class="stat-label">XP gagnes</span>
                 </div>
                 <div class="completion-stat">
                     <span class="stat-value" id="sessionDuration">45</span>
@@ -292,9 +334,7 @@
                     <span class="stat-label">calories</span>
                 </div>
             </div>
-            <div class="new-badges" id="newBadges">
-                <!-- Filled by JS if new badges -->
-            </div>
+            <div class="new-badges" id="newBadges"></div>
             <button class="completion-btn" id="completionBtn">Super ! 💪</button>
         </div>
     </div>
@@ -302,7 +342,7 @@
     <!-- Exercise Detail Modal -->
     <div id="exerciseDetailModal" class="modal hidden">
         <div class="modal-content exercise-detail">
-            <button class="close-modal" id="closeExerciseDetail">✕</button>
+            <button class="close-modal" id="closeExerciseDetail">X</button>
             <div class="detail-header">
                 <div class="detail-icon" id="detailIcon">🏋️</div>
                 <h2 id="detailName">Nom de l'exercice</h2>
@@ -313,7 +353,7 @@
                     <ul id="detailInstructions"></ul>
                 </div>
                 <div class="detail-section">
-                    <h4>⚠️ Points clés</h4>
+                    <h4>⚠️ Points cles</h4>
                     <p id="detailTips"></p>
                 </div>
             </div>
@@ -321,20 +361,36 @@
         </div>
     </div>
 
+    <!-- User Profile Modal -->
+    <div id="userProfileModal" class="modal hidden">
+        <div class="modal-content user-profile-mode">
+            <button class="close-modal" id="closeUserProfile">X</button>
+            <div class="user-profile-header">
+                <div class="user-profile-avatar" id="profileModalAvatar">🏀</div>
+                <h2 id="profileModalName">Utilisateur</h2>
+                <p id="profileModalWeek">Semaine 1</p>
+            </div>
+            <div class="user-profile-stats">
+                <div class="user-profile-stat">
+                    <span class="stat-value" id="profileModalXP">0</span>
+                    <span class="stat-label">XP</span>
+                </div>
+                <div class="user-profile-stat">
+                    <span class="stat-value" id="profileModalWorkouts">0</span>
+                    <span class="stat-label">Seances</span>
+                </div>
+                <div class="user-profile-stat">
+                    <span class="stat-value" id="profileModalStreak">0</span>
+                    <span class="stat-label">Streak</span>
+                </div>
+            </div>
+            <div class="user-profile-recent">
+                <h4>Dernieres seances</h4>
+                <div id="profileModalSessions"></div>
+            </div>
+        </div>
+    </div>
+
     <script src="app.js"></script>
-    <script>
-        // Enregistrement du Service Worker
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('SW enregistré:', registration.scope);
-                    })
-                    .catch(error => {
-                        console.log('Erreur SW:', error);
-                    });
-            });
-        }
-    </script>
 </body>
 </html>

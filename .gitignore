@@ -7,5 +7,9 @@
 .DS_Store
 Thumbs.db
 
-# Original document (optional - remove this line if you want to include it)
+# Node
+node_modules/
+.env
+
+# Original document
 *.docx
