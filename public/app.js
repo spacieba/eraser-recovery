@@ -38,7 +38,7 @@ const PROGRAM = {
             B: { name: "Explosivite + Haut du corps", day: "Mercredi", duration: 60, calories: 400, xp: 150, icon: "💪",
                 blocks: [
                     { name: "ECHAUFFEMENT", duration: 10, exercises: [
-                        { name: "Mobilite complete", reps: "5 min", icon: "🔄", instructions: ["Chevilles, hanches, epaules"], tips: "Prenez votre temps" },
+                        { name: "Mobilite complete", duration: 300, reps: "5 min", icon: "🔄", instructions: ["Chevilles, hanches, epaules"], tips: "Prenez votre temps" },
                         { name: "Jumping jacks legers", reps: "20", icon: "⭐", instructions: ["Activation cardio"], tips: "Progressif" }
                     ]},
                     { name: "CARDIO-EXPLOSIF", duration: 20, exercises: [
@@ -80,20 +80,21 @@ const PROGRAM = {
                     ]}
                 ]
             },
-            daily: { name: "Routine quotidienne", day: "Mar, Jeu, Ven, Dim", duration: 15, calories: 80, xp: 50, icon: "🌅",
+            daily: { name: "Routine quotidienne", day: "Mar, Jeu, Ven, Dim", duration: 20, calories: 100, xp: 50, icon: "🌅",
                 blocks: [
                     { name: "MOBILITE", duration: 3, exercises: [
-                        { name: "Position chevalier", duration: 60, reps: "1min/cote", icon: "🦵", instructions: ["Ouvrir hanches"], tips: "Respirez" },
-                        { name: "Flip flaps", duration: 60, reps: "1min", icon: "🦋", instructions: ["Genoux lateraux"], tips: "Fluide" }
+                        { name: "Position chevalier", duration: 45, reps: "45sec/cote", icon: "🦵", instructions: ["Pousser le genou vers l'avant pour ouvrir les hanches au maximum"], tips: "Ouvrez au maximum" },
+                        { name: "Flip flaps", duration: 45, reps: "45sec", icon: "🦋", instructions: ["Assis, genoux sur le cote, pousser le bassin vers l'avant a chaque fois"], tips: "Fluide" }
                     ]},
-                    { name: "GAINAGE", duration: 6, exercises: [
-                        { name: "Planche", duration: 40, reps: "3x40sec", icon: "🧱", instructions: ["Corps aligne"], tips: "Tenez" },
-                        { name: "Planche laterale", duration: 20, reps: "2x20sec/cote", icon: "📐", instructions: ["Hanches hautes"], tips: "Stable" },
-                        { name: "Superman", reps: "3x10", icon: "🦸", instructions: ["Lever bras/jambes opposes"], tips: "Controle" }
+                    { name: "GAINAGE", duration: 9, exercises: [
+                        { name: "Planche araignee", duration: 40, reps: "3x40sec", sets: 3, icon: "🕷️", instructions: ["Sur mains ou coudes, ramener genoux vers coudes alternativement"], tips: "Gainez fort" },
+                        { name: "Superman", reps: "3x10", icon: "🦸", instructions: ["Sur le ventre, lever bras/jambes opposes ou les deux en meme temps"], tips: "Controle" },
+                        { name: "Abdos elevation bassin", reps: "3x20", icon: "🔥", instructions: ["Elever le bassin, contracter les abdos"], tips: "Contractez fort" },
+                        { name: "Pompes pyramide", duration: 420, reps: "7min max, 10 pompes max", icon: "💪", instructions: ["Montante puis descendante"], tips: "Qualite avant quantite" }
                     ]},
-                    { name: "PREVENTIF", duration: 6, exercises: [
-                        { name: "Mollets excentriques", reps: "2x10/jambe", icon: "🦶", instructions: ["Descente 5sec"], tips: "NON NEGOCIABLE" },
-                        { name: "Equilibre yeux fermes", duration: 30, reps: "3x30sec/pied", icon: "⚖️", instructions: ["Sur un pied"], tips: "Proprioception" },
+                    { name: "PREVENTIF", duration: 8, exercises: [
+                        { name: "Mollets excentriques", reps: "2x10/jambe", icon: "🦶", instructions: ["Descente lente et controlee"], tips: "NON NEGOCIABLE" },
+                        { name: "Equilibre yeux fermes", duration: 30, reps: "3x30sec/pied", sets: 3, icon: "⚖️", instructions: ["Sur un pied, yeux fermes"], tips: "Proprioception" },
                         { name: "Squats 1 jambe", reps: "2x8/jambe", icon: "🦿", instructions: ["Assiste au mur"], tips: "Stabilite" }
                     ]}
                 ]
@@ -108,7 +109,7 @@ const PROGRAM = {
             B: { name: "Renforcement complet", day: "Mercredi", duration: 60, calories: 450, xp: 175, icon: "💪",
                 blocks: [
                     { name: "ECHAUFFEMENT", duration: 8, exercises: [
-                        { name: "Mobilite rapide", reps: "3min", icon: "🔄", instructions: ["Chevilles, hanches, epaules"], tips: "Complet" },
+                        { name: "Mobilite rapide", duration: 180, reps: "3min", icon: "🔄", instructions: ["Chevilles, hanches, epaules"], tips: "Complet" },
                         { name: "Activation cardio", duration: 60, reps: "1min", icon: "⭐", instructions: ["Jumping jacks + mountain climbers"], tips: "Progressif" }
                     ]},
                     { name: "CIRCUIT FULL BODY", duration: 40, exercises: [

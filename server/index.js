@@ -30,6 +30,7 @@ if (process.env.DATABASE_URL) {
 // In-memory storage for demo mode
 const demoUsers = new Map();
 const demoStats = new Map();
+const demoSessions = new Map(); // userId -> sessions[]
 
 // JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || 'effaceur_secret_key_2024';
@@ -367,7 +368,80 @@ app.post('/api/sessions/complete', authenticateToken, async (req, res) => {
     try {
         const { sessionKey, sessionName, xpEarned, duration, calories, exercises } = req.body;
         const userId = req.user.id;
+        const today = new Date().toISOString().split('T')[0];
 
+        // Demo mode (no database)
+        if (!pool) {
+            // Create session
+            const session = {
+                id: Date.now(),
+                user_id: userId,
+                session_key: sessionKey,
+                session_name: sessionName,
+                xp_earned: xpEarned,
+                duration: duration,
+                calories: calories,
+                completed_at: new Date().toISOString()
+            };
+
+            // Store session
+            if (!demoSessions.has(userId)) {
+                demoSessions.set(userId, []);
+            }
+            demoSessions.get(userId).push(session);
+
+            // Update stats
+            let stats = demoStats.get(userId) || {
+                total_xp: 0,
+                total_workouts: 0,
+                total_minutes: 0,
+                total_calories: 0,
+                current_streak: 0,
+                best_streak: 0,
+                last_workout_date: null,
+                badges: '[]'
+            };
+
+            // Calculate streak
+            let newStreak = 1;
+            if (stats.last_workout_date) {
+                const lastDateStr = stats.last_workout_date;
+                const yesterday = new Date();
+                yesterday.setDate(yesterday.getDate() - 1);
+                const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+                if (lastDateStr === today) {
+                    newStreak = stats.current_streak;
+                } else if (lastDateStr === yesterdayStr) {
+                    newStreak = stats.current_streak + 1;
+                }
+            }
+
+            stats.total_xp += xpEarned;
+            stats.total_workouts += 1;
+            stats.total_minutes += duration;
+            stats.total_calories += calories;
+            stats.current_streak = newStreak;
+            stats.best_streak = Math.max(stats.best_streak, newStreak);
+            stats.last_workout_date = today;
+
+            demoStats.set(userId, stats);
+
+            return res.json({
+                message: 'Séance enregistrée !',
+                session,
+                stats: {
+                    totalXP: stats.total_xp,
+                    totalWorkouts: stats.total_workouts,
+                    totalMinutes: stats.total_minutes,
+                    totalCalories: stats.total_calories,
+                    currentStreak: stats.current_streak,
+                    bestStreak: stats.best_streak
+                }
+            });
+        }
+
+        // Database mode
         // Insert session
         const sessionResult = await pool.query(
             `INSERT INTO completed_sessions (user_id, session_key, session_name, xp_earned, duration, calories)
@@ -389,8 +463,6 @@ app.post('/api/sessions/complete', authenticateToken, async (req, res) => {
         }
 
         // Update user stats
-        const today = new Date().toISOString().split('T')[0];
-
         // Get current stats
         const currentStats = await pool.query(
             'SELECT * FROM user_stats WHERE user_id = $1',
@@ -465,6 +537,12 @@ app.post('/api/sessions/complete', authenticateToken, async (req, res) => {
 // Get user's completed sessions
 app.get('/api/sessions', authenticateToken, async (req, res) => {
     try {
+        // Demo mode
+        if (!pool) {
+            const sessions = demoSessions.get(req.user.id) || [];
+            return res.json({ sessions: sessions.slice().reverse().slice(0, 50) });
+        }
+
         const result = await pool.query(
             `SELECT * FROM completed_sessions
              WHERE user_id = $1
@@ -550,6 +628,26 @@ app.post('/api/exercises/rate', authenticateToken, async (req, res) => {
 // Get all users with their stats (leaderboard)
 app.get('/api/community/leaderboard', authenticateToken, async (req, res) => {
     try {
+        // Demo mode
+        if (!pool) {
+            const leaderboard = [];
+            for (const [username, user] of demoUsers) {
+                const stats = demoStats.get(user.id) || {};
+                leaderboard.push({
+                    id: user.id,
+                    username: user.username,
+                    avatar: user.avatar || '🏀',
+                    current_week: user.current_week || 1,
+                    total_xp: stats.total_xp || 0,
+                    total_workouts: stats.total_workouts || 0,
+                    current_streak: stats.current_streak || 0,
+                    best_streak: stats.best_streak || 0
+                });
+            }
+            leaderboard.sort((a, b) => b.total_xp - a.total_xp);
+            return res.json({ leaderboard: leaderboard.slice(0, 50) });
+        }
+
         const result = await pool.query(
             `SELECT
                 u.id, u.username, u.avatar, u.current_week,
@@ -573,6 +671,30 @@ app.get('/api/community/leaderboard', authenticateToken, async (req, res) => {
 // Get recent activity from all users
 app.get('/api/community/feed', authenticateToken, async (req, res) => {
     try {
+        // Demo mode
+        if (!pool) {
+            const feed = [];
+            for (const [userId, sessions] of demoSessions) {
+                const user = [...demoUsers.values()].find(u => u.id === userId);
+                if (user) {
+                    for (const session of sessions) {
+                        feed.push({
+                            id: session.id,
+                            session_name: session.session_name,
+                            xp_earned: session.xp_earned,
+                            duration: session.duration,
+                            completed_at: session.completed_at,
+                            user_id: userId,
+                            username: user.username,
+                            avatar: user.avatar || '🏀'
+                        });
+                    }
+                }
+            }
+            feed.sort((a, b) => new Date(b.completed_at) - new Date(a.completed_at));
+            return res.json({ feed: feed.slice(0, 30) });
+        }
+
         const result = await pool.query(
             `SELECT
                 cs.id, cs.session_name, cs.xp_earned, cs.duration, cs.completed_at,
@@ -637,6 +759,17 @@ app.get('/api/community/user/:id', authenticateToken, async (req, res) => {
 app.patch('/api/user/settings', authenticateToken, async (req, res) => {
     try {
         const { avatar, currentWeek } = req.body;
+
+        // Demo mode
+        if (!pool) {
+            const user = [...demoUsers.values()].find(u => u.id === req.user.id);
+            if (user) {
+                if (avatar) user.avatar = avatar;
+                if (currentWeek) user.current_week = currentWeek;
+            }
+            return res.json({ message: 'Paramètres mis à jour' });
+        }
+
         const updates = [];
         const values = [];
         let paramCount = 1;
@@ -672,6 +805,15 @@ app.patch('/api/user/settings', authenticateToken, async (req, res) => {
 app.post('/api/user/badges', authenticateToken, async (req, res) => {
     try {
         const { badges } = req.body;
+
+        // Demo mode
+        if (!pool) {
+            const stats = demoStats.get(req.user.id);
+            if (stats) {
+                stats.badges = JSON.stringify(badges);
+            }
+            return res.json({ message: 'Badges mis à jour' });
+        }
 
         await pool.query(
             `UPDATE user_stats SET badges = $1 WHERE user_id = $2`,
