@@ -30,7 +30,6 @@ async function initDB() {
             CREATE TABLE IF NOT EXISTS users (
                 id SERIAL PRIMARY KEY,
                 username VARCHAR(50) UNIQUE NOT NULL,
-                email VARCHAR(100) UNIQUE NOT NULL,
                 password VARCHAR(255) NOT NULL,
                 avatar VARCHAR(10) DEFAULT '🏀',
                 current_week INTEGER DEFAULT 1,
@@ -105,24 +104,28 @@ function authenticateToken(req, res, next) {
 // Register
 app.post('/api/auth/register', async (req, res) => {
     try {
-        const { username, email, password } = req.body;
+        const { username, password } = req.body;
 
-        if (!username || !email || !password) {
-            return res.status(400).json({ error: 'Tous les champs sont requis' });
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Pseudo et mot de passe requis' });
+        }
+
+        if (username.length < 2) {
+            return res.status(400).json({ error: 'Pseudo trop court (min 2 caracteres)' });
         }
 
         if (password.length < 4) {
-            return res.status(400).json({ error: 'Mot de passe trop court (min 4 caractères)' });
+            return res.status(400).json({ error: 'Mot de passe trop court (min 4 caracteres)' });
         }
 
         // Check if user exists
         const existingUser = await pool.query(
-            'SELECT id FROM users WHERE email = $1 OR username = $2',
-            [email, username]
+            'SELECT id FROM users WHERE username = $1',
+            [username]
         );
 
         if (existingUser.rows.length > 0) {
-            return res.status(400).json({ error: 'Email ou pseudo déjà utilisé' });
+            return res.status(400).json({ error: 'Ce pseudo est deja pris' });
         }
 
         // Hash password
@@ -130,8 +133,8 @@ app.post('/api/auth/register', async (req, res) => {
 
         // Create user
         const result = await pool.query(
-            'INSERT INTO users (username, email, password) VALUES ($1, $2, $3) RETURNING id, username, email, avatar, current_week',
-            [username, email, hashedPassword]
+            'INSERT INTO users (username, password) VALUES ($1, $2) RETURNING id, username, avatar, current_week',
+            [username, hashedPassword]
         );
 
         const user = result.rows[0];
@@ -146,12 +149,11 @@ app.post('/api/auth/register', async (req, res) => {
         const token = jwt.sign({ id: user.id, username: user.username }, JWT_SECRET, { expiresIn: '30d' });
 
         res.status(201).json({
-            message: 'Compte créé avec succès',
+            message: 'Compte cree!',
             token,
             user: {
                 id: user.id,
                 username: user.username,
-                email: user.email,
                 avatar: user.avatar,
                 currentWeek: user.current_week
             }
@@ -165,20 +167,20 @@ app.post('/api/auth/register', async (req, res) => {
 // Login
 app.post('/api/auth/login', async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { username, password } = req.body;
 
-        if (!email || !password) {
-            return res.status(400).json({ error: 'Email et mot de passe requis' });
+        if (!username || !password) {
+            return res.status(400).json({ error: 'Pseudo et mot de passe requis' });
         }
 
         // Find user
         const result = await pool.query(
-            'SELECT * FROM users WHERE email = $1',
-            [email]
+            'SELECT * FROM users WHERE username = $1',
+            [username]
         );
 
         if (result.rows.length === 0) {
-            return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+            return res.status(401).json({ error: 'Pseudo ou mot de passe incorrect' });
         }
 
         const user = result.rows[0];
@@ -186,7 +188,7 @@ app.post('/api/auth/login', async (req, res) => {
         // Check password
         const validPassword = await bcrypt.compare(password, user.password);
         if (!validPassword) {
-            return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
+            return res.status(401).json({ error: 'Pseudo ou mot de passe incorrect' });
         }
 
         // Generate token

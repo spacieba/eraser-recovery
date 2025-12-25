@@ -209,10 +209,10 @@ async function apiCall(endpoint, options = {}) {
 }
 
 // ==================== AUTH ====================
-async function register(username, email, password) {
+async function register(username, password) {
     const data = await apiCall('/api/auth/register', {
         method: 'POST',
-        body: JSON.stringify({ username, email, password })
+        body: JSON.stringify({ username, password })
     });
     state.token = data.token;
     state.user = data.user;
@@ -220,10 +220,10 @@ async function register(username, email, password) {
     return data;
 }
 
-async function login(email, password) {
+async function login(username, password) {
     const data = await apiCall('/api/auth/login', {
         method: 'POST',
-        body: JSON.stringify({ email, password })
+        body: JSON.stringify({ username, password })
     });
     state.token = data.token;
     state.user = data.user;
@@ -354,13 +354,13 @@ function setupAuthHandlers() {
 
     // Login
     $('#loginBtn')?.addEventListener('click', async () => {
-        const email = $('#loginEmail').value;
+        const username = $('#loginUsername').value;
         const password = $('#loginPassword').value;
         const errorDiv = $('#loginError');
 
         try {
             errorDiv.classList.add('hidden');
-            await login(email, password);
+            await login(username, password);
             showApp();
         } catch (err) {
             errorDiv.textContent = err.message;
@@ -371,13 +371,12 @@ function setupAuthHandlers() {
     // Register
     $('#registerBtn')?.addEventListener('click', async () => {
         const username = $('#registerUsername').value;
-        const email = $('#registerEmail').value;
         const password = $('#registerPassword').value;
         const errorDiv = $('#registerError');
 
         try {
             errorDiv.classList.add('hidden');
-            await register(username, email, password);
+            await register(username, password);
             showApp();
         } catch (err) {
             errorDiv.textContent = err.message;
