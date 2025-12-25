@@ -19,9 +19,12 @@ let pool = null;
 let dbConnected = false;
 
 if (process.env.DATABASE_URL) {
+    // Disable SSL for internal Railway connections (private network)
+    // SSL is only needed for external connections
+    const useSSL = process.env.DATABASE_URL.includes('railway.app') && !process.env.DATABASE_URL.includes('.internal');
     pool = new Pool({
         connectionString: process.env.DATABASE_URL,
-        ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
+        ssl: useSSL ? { rejectUnauthorized: false } : false
     });
 } else {
     console.warn('⚠️ DATABASE_URL not set - running in demo mode (data will not persist)');
