@@ -158,7 +158,48 @@ const BADGES = [
     { id: 'basket_ready', name: 'Pret pour le Terrain', icon: '🏀', desc: 'Phase 2', condition: s => s.currentWeek >= 3 }
 ];
 
-const QUOTES = ["L'Effaceur Is Back! 🏀", "Chaque seance compte!", "Tu es plus fort que tu le penses!", "Le terrain t'attend!", "Champion en construction!"];
+const QUOTES = [
+    { text: "Ce n'est pas comment tu tombes qui compte. C'est comment tu te relèves.", author: "Michael Jordan" },
+    { text: "L'échec n'est qu'une opportunité de recommencer plus intelligemment.", author: "Henry Ford" },
+    { text: "Tu ne sais jamais à quel point tu es fort jusqu'au jour où être fort est la seule option.", author: "Bob Marley" },
+    { text: "Les revers sont des tremplins vers la grandeur.", author: "Serena Williams" },
+    { text: "Après la pluie vient le beau temps. Après l'échec vient le succès.", author: "Usain Bolt" },
+    { text: "Ce qui ne me tue pas me rend plus fort.", author: "Friedrich Nietzsche" },
+    { text: "J'ai raté plus de 9000 tirs. Perdu presque 300 matchs. J'ai échoué encore et encore. C'est pourquoi je réussis.", author: "Michael Jordan" },
+    { text: "La défaite n'est pas le pire des échecs. Ne pas avoir essayé est le véritable échec.", author: "George E. Woodberry" },
+    { text: "Tomber sept fois, se relever huit.", author: "Proverbe japonais" },
+    { text: "Un champion est quelqu'un qui se relève quand il ne peut pas.", author: "Jack Dempsey" },
+    { text: "La vie commence là où se termine ta zone de confort.", author: "Neale Donald Walsch" },
+    { text: "Dans chaque difficulté se cache une opportunité.", author: "Albert Einstein" },
+    { text: "Les cicatrices nous rappellent que le passé est réel, mais pas notre futur.", author: "David Goggins" },
+    { text: "On ne grandit jamais dans le confort. On grandit quand on est mis au défi.", author: "Rafael Nadal" },
+    { text: "La douleur est temporaire. Abandonner dure pour toujours.", author: "Lance Armstrong" },
+    { text: "Chaque défaite est une leçon déguisée.", author: "Tony Parker" },
+    { text: "Le succès n'est pas final, l'échec n'est pas fatal : c'est le courage de continuer qui compte.", author: "Winston Churchill" },
+    { text: "On peut perdre un combat et gagner la guerre.", author: "Thierry Henry" },
+    { text: "Les moments difficiles construisent des personnes fortes.", author: "Dwayne Johnson" },
+    { text: "La chute n'est pas un échec. L'échec, c'est de rester là où on est tombé.", author: "Socrate" },
+    { text: "Sois le changement que tu veux voir dans le monde.", author: "Mahatma Gandhi" },
+    { text: "La seule constante dans la vie est le changement.", author: "Héraclite" },
+    { text: "Celui qui déplace une montagne commence par déplacer de petites pierres.", author: "Confucius" },
+    { text: "Tu ne peux pas changer le début, mais tu peux commencer où tu es et changer la fin.", author: "C.S. Lewis" },
+    { text: "La meilleure façon de prédire l'avenir est de le créer.", author: "Abraham Lincoln" },
+    { text: "Deviens la meilleure version de toi-même, pas une copie de quelqu'un d'autre.", author: "Judy Garland" },
+    { text: "Le plus grand voyage commence par un simple pas.", author: "Lao Tseu" },
+    { text: "N'attends pas le bon moment. Prends ce moment et rends-le bon.", author: "Zoë Kravitz" },
+    { text: "Hier, tu as dit demain. Fais-le maintenant.", author: "Nike" },
+    { text: "La douleur que tu ressens aujourd'hui sera la force que tu ressentiras demain.", author: "Arnold Schwarzenegger" },
+    { text: "Être le meilleur, c'est bien. Le devenir, c'est mieux.", author: "Zinédine Zidane" },
+    { text: "Le passé est un enseignement, pas une prison.", author: "Tony Robbins" },
+    { text: "Chaque jour est une chance de devenir meilleur qu'hier.", author: "LeBron James" },
+    { text: "Ne regarde pas en arrière, tu n'iras pas par là.", author: "Mary Engelbreit" },
+    { text: "La vie est comme faire du vélo : pour garder l'équilibre, il faut avancer.", author: "Albert Einstein" },
+    { text: "Tu n'es pas défini par ton passé, mais par ce que tu choisis de devenir.", author: "Oprah Winfrey" },
+    { text: "Le meilleur moment pour planter un arbre était il y a 20 ans. Le deuxième meilleur moment, c'est maintenant.", author: "Proverbe chinois" },
+    { text: "Ce n'est pas la fin. Ce n'est même pas le début de la fin. C'est peut-être la fin du début.", author: "Winston Churchill" },
+    { text: "Lâche ce qui était pour accueillir ce qui vient.", author: "Bouddha" },
+    { text: "Chaque matin, tu as deux choix : continuer à dormir sur tes rêves ou te lever et les réaliser.", author: "Carmelo Anthony" }
+];
 const TIPS = ["Hydratation : 2,5-3L/jour", "Proteines : 1,6-1,8g/kg", "Sommeil : 7-8h minimum", "Mollets excentriques = CRUCIAL", "Douleur >4/10 = STOP"];
 
 // State
@@ -453,7 +494,15 @@ function setupSettings() {
 function renderHome() {
     $('#currentWeek').textContent = state.currentWeek;
     $('#currentPhase').textContent = state.currentWeek <= 2 ? 'Phase 1' : 'Phase 2';
-    $('#motivationQuote').textContent = QUOTES[Math.floor(Math.random() * QUOTES.length)];
+
+    // Citation du jour (change chaque jour basé sur le jour de l'année)
+    const now = new Date();
+    const startOfYear = new Date(now.getFullYear(), 0, 0);
+    const dayOfYear = Math.floor((now - startOfYear) / (1000 * 60 * 60 * 24));
+    const quoteIndex = dayOfYear % QUOTES.length;
+    const todayQuote = QUOTES[quoteIndex];
+    $('#quoteText').textContent = `"${todayQuote.text}"`;
+    $('#quoteAuthor').textContent = `— ${todayQuote.author}`;
 
     renderTodayCard();
     renderWeekDays();
