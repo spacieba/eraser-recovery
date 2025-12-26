@@ -95,6 +95,10 @@
                 <span class="tab-icon">👥</span>
                 <span class="tab-label">Equipe</span>
             </button>
+            <button class="tab" data-tab="chat">
+                <span class="tab-icon">💬</span>
+                <span class="tab-label">Chat</span>
+            </button>
             <button class="tab" data-tab="progress">
                 <span class="tab-icon">📊</span>
                 <span class="tab-label">Progres</span>
@@ -175,6 +179,22 @@
                 <div class="feed-section">
                     <h3>📣 Activite recente</h3>
                     <div class="feed-list" id="feedList"></div>
+                </div>
+            </section>
+
+            <!-- Chat Page -->
+            <section id="chat" class="page">
+                <div class="chat-container">
+                    <div class="chat-header">
+                        <h2>💬 Chat de l'equipe</h2>
+                    </div>
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-empty">Aucun message pour l'instant. Sois le premier !</div>
+                    </div>
+                    <div class="chat-input-area">
+                        <input type="text" id="chatInput" placeholder="Ton message..." maxlength="500">
+                        <button id="sendChatBtn">➤</button>
+                    </div>
                 </div>
             </section>
 

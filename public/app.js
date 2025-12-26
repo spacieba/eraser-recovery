@@ -327,6 +327,101 @@ async function loadUserProfile(userId) {
     }
 }
 
+// ==================== CHAT ====================
+let chatRefreshInterval = null;
+
+async function loadChatMessages() {
+    try {
+        const data = await apiCall('/api/chat/messages');
+        renderChatMessages(data.messages);
+
+        // Auto-refresh toutes les 10 secondes
+        if (chatRefreshInterval) clearInterval(chatRefreshInterval);
+        chatRefreshInterval = setInterval(async () => {
+            if ($('#chat').classList.contains('active')) {
+                const newData = await apiCall('/api/chat/messages');
+                renderChatMessages(newData.messages);
+            } else {
+                clearInterval(chatRefreshInterval);
+            }
+        }, 10000);
+    } catch (err) {
+        console.error('Error loading chat:', err);
+        $('#chatMessages').innerHTML = '<div class="chat-empty">Erreur de chargement du chat</div>';
+    }
+}
+
+function renderChatMessages(messages) {
+    const container = $('#chatMessages');
+    if (!messages || messages.length === 0) {
+        container.innerHTML = '<div class="chat-empty">Aucun message pour l\'instant. Sois le premier !</div>';
+        return;
+    }
+
+    container.innerHTML = messages.map(msg => {
+        const isMe = msg.user_id === state.user?.id;
+        const time = new Date(msg.created_at).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+        const date = new Date(msg.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+
+        return `
+            <div class="chat-message ${isMe ? 'sent' : 'received'}">
+                ${!isMe ? `<div class="chat-avatar">${msg.avatar || '🏀'}</div>` : ''}
+                <div class="chat-bubble">
+                    ${!isMe ? `<div class="chat-username">${msg.username}</div>` : ''}
+                    <div class="chat-text">${escapeHtml(msg.content)}</div>
+                    <div class="chat-time">${date} ${time}</div>
+                </div>
+            </div>
+        `;
+    }).join('');
+
+    // Scroll en bas
+    container.scrollTop = container.scrollHeight;
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+async function sendChatMessage() {
+    const input = $('#chatInput');
+    const content = input.value.trim();
+
+    if (!content) return;
+
+    try {
+        input.disabled = true;
+        $('#sendChatBtn').disabled = true;
+
+        await apiCall('/api/chat/send', {
+            method: 'POST',
+            body: JSON.stringify({ content })
+        });
+
+        input.value = '';
+        await loadChatMessages();
+    } catch (err) {
+        console.error('Error sending message:', err);
+        alert('Erreur lors de l\'envoi du message');
+    } finally {
+        input.disabled = false;
+        $('#sendChatBtn').disabled = false;
+        input.focus();
+    }
+}
+
+function setupChat() {
+    $('#sendChatBtn')?.addEventListener('click', sendChatMessage);
+    $('#chatInput')?.addEventListener('keypress', e => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+            e.preventDefault();
+            sendChatMessage();
+        }
+    });
+}
+
 // ==================== SESSIONS ====================
 async function completeSessionAPI(sessionData) {
     try {
@@ -439,6 +534,7 @@ function setupAuthHandlers() {
 function initApp() {
     setupNavigation();
     setupSettings();
+    setupChat();
     renderHome();
     renderWorkout();
     renderProgress();
@@ -463,6 +559,9 @@ function setupNavigation() {
             if (tabName === 'community') {
                 loadLeaderboard();
                 loadFeed();
+            }
+            if (tabName === 'chat') {
+                loadChatMessages();
             }
         });
     });

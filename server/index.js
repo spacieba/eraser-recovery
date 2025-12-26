@@ -34,6 +34,7 @@ if (process.env.DATABASE_URL) {
 const demoUsers = new Map();
 const demoStats = new Map();
 const demoSessions = new Map(); // userId -> sessions[]
+const demoGroupMessages = []; // Chat de groupe
 
 // JWT Secret
 const JWT_SECRET = process.env.JWT_SECRET || 'effaceur_secret_key_2024';
@@ -90,9 +91,17 @@ async function initDB() {
                 updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
 
+            CREATE TABLE IF NOT EXISTS group_messages (
+                id SERIAL PRIMARY KEY,
+                user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+                content TEXT NOT NULL,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+
             CREATE INDEX IF NOT EXISTS idx_sessions_user ON completed_sessions(user_id);
             CREATE INDEX IF NOT EXISTS idx_exercises_user ON completed_exercises(user_id);
             CREATE INDEX IF NOT EXISTS idx_sessions_date ON completed_sessions(completed_at);
+            CREATE INDEX IF NOT EXISTS idx_group_messages_date ON group_messages(created_at);
         `);
         console.log('Database initialized successfully');
     } catch (error) {
@@ -826,6 +835,97 @@ app.post('/api/user/badges', authenticateToken, async (req, res) => {
         res.json({ message: 'Badges mis à jour' });
     } catch (error) {
         console.error('Update badges error:', error);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// ==================== CHAT DE GROUPE ====================
+
+// Get chat messages
+app.get('/api/chat/messages', authenticateToken, async (req, res) => {
+    try {
+        // Demo mode
+        if (!pool) {
+            const messages = demoGroupMessages.slice(-50).map(msg => {
+                const user = [...demoUsers.values()].find(u => u.id === msg.user_id);
+                return {
+                    id: msg.id,
+                    content: msg.content,
+                    created_at: msg.created_at,
+                    user_id: msg.user_id,
+                    username: user?.username || 'Inconnu',
+                    avatar: user?.avatar || '🏀'
+                };
+            });
+            return res.json({ messages });
+        }
+
+        const result = await pool.query(
+            `SELECT gm.id, gm.content, gm.created_at, gm.user_id,
+                    u.username, u.avatar
+             FROM group_messages gm
+             JOIN users u ON gm.user_id = u.id
+             ORDER BY gm.created_at DESC
+             LIMIT 50`
+        );
+
+        res.json({ messages: result.rows.reverse() });
+    } catch (error) {
+        console.error('Get chat messages error:', error);
+        res.status(500).json({ error: 'Erreur serveur' });
+    }
+});
+
+// Send chat message
+app.post('/api/chat/send', authenticateToken, async (req, res) => {
+    try {
+        const { content } = req.body;
+        const userId = req.user.id;
+
+        if (!content || content.trim().length === 0) {
+            return res.status(400).json({ error: 'Message vide' });
+        }
+
+        if (content.length > 500) {
+            return res.status(400).json({ error: 'Message trop long (max 500 caractères)' });
+        }
+
+        // Demo mode
+        if (!pool) {
+            const user = [...demoUsers.values()].find(u => u.id === userId);
+            const message = {
+                id: Date.now(),
+                user_id: userId,
+                content: content.trim(),
+                created_at: new Date().toISOString(),
+                username: user?.username || 'Inconnu',
+                avatar: user?.avatar || '🏀'
+            };
+            demoGroupMessages.push(message);
+            return res.json({ message });
+        }
+
+        const result = await pool.query(
+            `INSERT INTO group_messages (user_id, content)
+             VALUES ($1, $2)
+             RETURNING id, content, created_at, user_id`,
+            [userId, content.trim()]
+        );
+
+        const userResult = await pool.query(
+            'SELECT username, avatar FROM users WHERE id = $1',
+            [userId]
+        );
+
+        res.json({
+            message: {
+                ...result.rows[0],
+                username: userResult.rows[0].username,
+                avatar: userResult.rows[0].avatar
+            }
+        });
+    } catch (error) {
+        console.error('Send chat message error:', error);
         res.status(500).json({ error: 'Erreur serveur' });
     }
 });
